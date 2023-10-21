@@ -1,0 +1,32 @@
+name: Checkov Security Analysis
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  checkov:
+    name: Run Checkov
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install Checkov
+        run: pip install checkov
+
+      - name: Run Checkov
+        run: checkov -d . -o junitxml > checkov-report.xml
+
+      - name: Upload Checkov Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: checkov-report
+          path: checkov-report.xml
